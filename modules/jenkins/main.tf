@@ -1,9 +1,9 @@
-data "aws_ami" "amazon_linux_2_arm" {
+data "aws_ami" "amazon_linux_2023_arm" {
   most_recent = true
   owners      = ["amazon"]
   filter {
     name   = "name"
-    values = ["amzn2-ami-hvm-*-arm64-gp2"]
+    values = ["al2023-ami-*-arm64"]
   }
 }
 
@@ -46,7 +46,7 @@ resource "aws_security_group" "jenkins_sg" {
 }
 
 resource "aws_instance" "jenkins" {
-  ami           = data.aws_ami.amazon_linux_2_arm.id
+  ami           = data.aws_ami.amazon_linux_2023_arm.id
   instance_type = var.instance_type
   key_name      = aws_key_pair.jenkins.key_name
 
