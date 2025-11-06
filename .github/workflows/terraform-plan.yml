@@ -42,7 +42,7 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-                env:
+        env:
           TF_VAR_jenkins_ssh_public_key: ${{ secrets.JENKINS_SSH_PUBLIC_KEY }}
         run: |
           terraform plan \
