@@ -65,7 +65,7 @@ resource "aws_instance" "jenkins" {
 
 resource "aws_ebs_volume" "jenkins_data" {
   availability_zone = data.aws_availability_zones.available.names[0]
-  size              = 20
+  size              = 8
   type              = "gp3"
   encrypted         = true
 
