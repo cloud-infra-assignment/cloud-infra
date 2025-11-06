@@ -7,6 +7,10 @@ data "aws_ami" "amazon_linux_2_arm" {
   }
 }
 
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
 resource "aws_key_pair" "jenkins" {
   key_name   = "jenkins-key"
   public_key = var.jenkins_ssh_public_key
@@ -50,4 +54,19 @@ resource "aws_instance" "jenkins" {
   vpc_security_group_ids = [aws_security_group.jenkins_sg.id]
 
   tags = merge(var.common_tags, { Name = "jenkins" })
+}
+
+resource "aws_ebs_volume" "jenkins_data" {
+  availability_zone = data.aws_availability_zones.available.names[0]
+  size              = 20
+  type              = "gp3"
+  encrypted         = true
+
+  tags = merge(var.common_tags, { Name = "jenkins-data" })
+}
+
+resource "aws_volume_attachment" "jenkins_data" {
+  device_name = "/dev/sdf"
+  volume_id   = aws_ebs_volume.jenkins_data.id
+  instance_id = aws_instance.jenkins.id
 }
