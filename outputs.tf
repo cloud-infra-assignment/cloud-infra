@@ -1,3 +1,4 @@
+# VPC Outputs
 output "vpc_id" {
   description = "VPC ID"
   value       = module.vpc.vpc_id
@@ -23,12 +24,18 @@ output "nat_gateway_ips" {
   value       = module.vpc.nat_public_ips
 }
 
-output "azs" {
-  description = "Availability Zones used"
-  value       = module.vpc.azs
+# Jenkins Outputs
+output "jenkins_instance_id" {
+  description = "Jenkins Instance ID"
+  value       = module.jenkins.instance_id
 }
 
-output "internet_gateway_id" {
-  description = "Internet Gateway ID"
-  value       = module.vpc.igw_id
+output "jenkins_public_ip" {
+  description = "Jenkins Public IP"
+  value       = module.jenkins.public_ip
+}
+
+output "jenkins_security_group_id" {
+  description = "Jenkins Security Group ID"
+  value       = module.jenkins.security_group_id
 }
