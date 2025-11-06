@@ -53,6 +53,13 @@ resource "aws_instance" "jenkins" {
   subnet_id              = var.public_subnet_ids[0]
   vpc_security_group_ids = [aws_security_group.jenkins_sg.id]
 
+  root_block_device {
+    volume_size           = 10
+    volume_type           = "gp3"
+    delete_on_termination = true
+    encrypted             = true
+  }
+
   tags = merge(var.common_tags, { Name = "jenkins" })
 }
 
