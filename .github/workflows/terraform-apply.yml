@@ -32,4 +32,10 @@ jobs:
         run: terraform init
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve
+        env:
+          TF_VAR_jenkins_ssh_public_key: ${{ secrets.JENKINS_SSH_PUBLIC_KEY }}
+        run: |
+          terraform apply \
+            -auto-approve \
+            -lock-timeout=60s \
+            -input=false
