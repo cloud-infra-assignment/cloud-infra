@@ -12,6 +12,22 @@ module "aws_eks" {
   endpoint_public_access                   = true
   create_cloudwatch_log_group              = false
 
+  # Grant cluster-admin access to the GitHub Actions role
+  access_entries = {
+    github_actions = {
+      principal_arn = "arn:aws:iam::339051025574:role/GitHubActionsRole"
+      type          = "EC2_LINUX"
+      access_policy_associations = {
+        cluster_admin = {
+          access_scope = {
+            type = "cluster"
+          }
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+        }
+      }
+    }
+  }
+
   eks_managed_node_groups = {
     default = {
       instance_types = var.node_instance_types
