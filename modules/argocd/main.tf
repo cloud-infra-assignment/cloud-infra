@@ -42,5 +42,3 @@ resource "kubernetes_manifest" "microblog_application" {
 
   depends_on = [helm_release.argocd]
 }
-
-

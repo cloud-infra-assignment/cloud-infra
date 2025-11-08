@@ -23,7 +23,7 @@ module "eks" {
   private_subnet_ids   = module.vpc.private_subnets
   private_subnet_cidrs = module.vpc.private_subnet_cidrs
 
-  node_instance_types = ["t4g.small"]
+  node_instance_types = ["t4g.medium"]
   node_ami_type       = "AL2023_ARM_64_STANDARD"
   node_min_size       = 1
   node_max_size       = 3
@@ -32,9 +32,13 @@ module "eks" {
   tags = var.common_tags
 }
 
-# Kubernetes resources (StorageClasses)
+# Kubernetes resources (StorageClasses, ALB Controller, etc)
 module "k8s" {
   source = "./modules/k8s"
+
+  cluster_name          = module.eks.cluster_name
+  cluster_oidc_provider = module.eks.oidc_provider_arn
+  vpc_id                = module.vpc.vpc_id
 
   depends_on = [module.eks]
 }
