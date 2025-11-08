@@ -8,12 +8,24 @@ module "aws_eks" {
   vpc_id     = var.vpc_id
   subnet_ids = var.private_subnet_ids
 
-  enable_cluster_creator_admin_permissions = true
+  enable_cluster_creator_admin_permissions = false
   endpoint_public_access                   = true
   create_cloudwatch_log_group              = false
 
-  # Grant cluster-admin access to the GitHub Actions role
+  # Grant cluster-admin access to both the original cluster creator and GitHub Actions role
   access_entries = {
+    cluster_creator = {
+      principal_arn = "arn:aws:iam::339051025574:user/awscli"
+      type          = "STANDARD"
+      access_policy_associations = {
+        cluster_admin = {
+          access_scope = {
+            type = "cluster"
+          }
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+        }
+      }
+    }
     github_actions = {
       principal_arn = "arn:aws:iam::339051025574:role/GitHubActionsRole"
       type          = "EC2_LINUX"
