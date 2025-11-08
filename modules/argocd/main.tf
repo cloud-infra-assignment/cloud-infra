@@ -40,5 +40,9 @@ resource "kubernetes_manifest" "microblog_application" {
     }
   }
 
+  field_manager {
+    force_conflicts = true
+  }
+
   depends_on = [helm_release.argocd]
 }
