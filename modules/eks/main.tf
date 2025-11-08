@@ -17,7 +17,7 @@ module "aws_eks" {
     cluster_creator = {
       principal_arn = "arn:aws:iam::339051025574:user/awscli"
       type          = "STANDARD"
-      access_policy_associations = {
+      policy_associations = {
         cluster_admin = {
           access_scope = {
             type = "cluster"
@@ -29,7 +29,7 @@ module "aws_eks" {
     github_actions = {
       principal_arn = "arn:aws:iam::339051025574:role/GitHubActionsRole"
       type          = "STANDARD"
-      access_policy_associations = {
+      policy_associations = {
         cluster_admin = {
           access_scope = {
             type = "cluster"
