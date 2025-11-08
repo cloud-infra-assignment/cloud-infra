@@ -28,7 +28,7 @@ module "aws_eks" {
     }
     github_actions = {
       principal_arn = "arn:aws:iam::339051025574:role/GitHubActionsRole"
-      type          = "EC2_LINUX"
+      type          = "STANDARD"
       access_policy_associations = {
         cluster_admin = {
           access_scope = {
