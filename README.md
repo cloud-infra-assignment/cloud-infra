@@ -6,13 +6,18 @@ Terraform infrastructure with GitHub Actions CI/CD pipeline using AWS OIDC authe
 
 This project implements a complete cloud infrastructure stack for continuous integration, continuous deployment, and application orchestration on AWS.
 
+## Architecture Diagram
+
+![Architecture Diagram](./ARCHITECTURE.png)
+
 ## Architecture Components
 
 - **VPC** - Isolated network with public and private subnets
-- **Jenkins** - CI/CD automation server for build pipelines
 - **EKS** - Managed Kubernetes cluster on AWS
+- **Jenkins** - CI/CD automation server for build pipelines
 - **Kubernetes** - Container orchestration platform
-- **ArgoCD** - GitOps-based continuous deployment
+    - **ArgoCD** - GitOps-based continuous deployment
+
 
 ## Deployment Flow
 
