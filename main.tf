@@ -26,7 +26,7 @@ module "eks" {
   node_instance_types = ["t4g.medium"]
   node_ami_type       = "AL2023_ARM_64_STANDARD"
   node_min_size       = 1
-  node_max_size       = 3
+  node_max_size       = 2
   node_desired_size   = 2
 
   tags = var.common_tags
