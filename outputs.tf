@@ -39,3 +39,25 @@ output "jenkins_security_group_id" {
   description = "Jenkins Security Group ID"
   value       = module.jenkins.security_group_id
 }
+
+# EKS Outputs
+output "eks_cluster_name" {
+  description = "EKS Cluster Name"
+  value       = module.eks.cluster_name
+}
+
+output "eks_cluster_endpoint" {
+  description = "EKS Cluster Endpoint"
+  value       = module.eks.cluster_endpoint
+}
+
+output "eks_cluster_certificate_authority_data" {
+  description = "EKS Cluster CA Data (base64)"
+  value       = module.eks.cluster_certificate_authority_data
+  sensitive   = true
+}
+
+output "eks_update_kubeconfig_command" {
+  description = "Command to update kubeconfig for this cluster"
+  value       = "aws eks update-kubeconfig --region ${var.aws_region} --name ${module.eks.cluster_name}"
+}

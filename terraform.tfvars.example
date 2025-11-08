@@ -1,0 +1,9 @@
+# Copy this file to terraform.tfvars and fill in your values
+# DO NOT commit terraform.tfvars to version control
+
+# Jenkins SSH public key for EC2 access
+jenkins_ssh_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFUERwBLsifz13f9YBvc2w5YGjgN/rHBO2F9ku+MPi0u your-user@your-host"
+
+# Optional: Override default values
+# aws_region = "eu-central-1"
+
