@@ -25,3 +25,7 @@ output "azs" {
 output "igw_id" {
   value = module.vpc.igw_id
 }
+
+output "private_subnet_cidrs" {
+  value = [for subnet_id in module.vpc.private_subnets : data.aws_subnet.private[subnet_id].cidr_block]
+}

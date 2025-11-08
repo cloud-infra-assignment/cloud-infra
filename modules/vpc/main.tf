@@ -2,6 +2,12 @@ data "aws_availability_zones" "available" {
   state = "available"
 }
 
+# Data source to fetch private subnet CIDR blocks
+data "aws_subnet" "private" {
+  for_each = toset(module.vpc.private_subnets)
+  id       = each.value
+}
+
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "~> 6.5"
