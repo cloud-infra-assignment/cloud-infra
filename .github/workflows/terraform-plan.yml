@@ -43,7 +43,8 @@ jobs:
       - name: Terraform Plan
         id: plan
         env:
-          TF_VAR_jenkins_ssh_public_key: ${{ secrets.JENKINS_SSH_PUBLIC_KEY }}
+          TF_VAR_ghcr_username: ${{ secrets.GHCR_USERNAME }}
+          TF_VAR_ghcr_token: ${{ secrets.GHCR_TOKEN }}
         run: |
           terraform plan \
             -no-color \
