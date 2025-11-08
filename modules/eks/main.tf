@@ -12,33 +12,8 @@ module "aws_eks" {
   endpoint_public_access                   = true
   create_cloudwatch_log_group              = false
 
-  # Grant cluster-admin access to both the original cluster creator and GitHub Actions role
-  access_entries = {
-    cluster_creator = {
-      principal_arn = "arn:aws:iam::339051025574:user/awscli"
-      type          = "STANDARD"
-      policy_associations = {
-        cluster_admin = {
-          access_scope = {
-            type = "cluster"
-          }
-          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-        }
-      }
-    }
-    github_actions = {
-      principal_arn = "arn:aws:iam::339051025574:role/GitHubActionsRole"
-      type          = "STANDARD"
-      policy_associations = {
-        cluster_admin = {
-          access_scope = {
-            type = "cluster"
-          }
-          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-        }
-      }
-    }
-  }
+  # Construct access entries from optional inputs, avoiding hardcoded ARNs
+  access_entries = local.access_entries
 
   eks_managed_node_groups = {
     default = {
@@ -66,6 +41,12 @@ module "aws_eks" {
   }
 
   tags = var.tags
+
+  # Pin KMS key administrators to a stable set of principals to prevent policy churn
+  # when different execution contexts (developer machines vs CI/CD runners) apply Terraform.
+  # Without this, the upstream module may rewrite the KMS key policy to whichever principal
+  # last applied, causing perpetual diffs.
+  kms_key_administrators = var.kms_key_administrators
 }
 
 module "irsa_ebs_csi" {
@@ -78,4 +59,37 @@ module "irsa_ebs_csi" {
   role_policy_arns              = ["arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"]
   oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:ebs-csi-controller-sa"]
   tags                          = var.tags
+}
+
+locals {
+  access_entries = merge(
+    var.cluster_creator_principal_arn != "" ? {
+      cluster_creator = {
+        principal_arn = var.cluster_creator_principal_arn
+        type          = "STANDARD"
+        policy_associations = {
+          cluster_admin = {
+            access_scope = {
+              type = "cluster"
+            }
+            policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          }
+        }
+      }
+    } : {},
+    var.github_actions_principal_arn != "" ? {
+      github_actions = {
+        principal_arn = var.github_actions_principal_arn
+        type          = "STANDARD"
+        policy_associations = {
+          cluster_admin = {
+            access_scope = {
+              type = "cluster"
+            }
+            policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          }
+        }
+      }
+    } : {}
+  )
 }

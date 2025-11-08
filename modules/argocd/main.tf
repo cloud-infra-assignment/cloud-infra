@@ -9,6 +9,29 @@ resource "helm_release" "argocd" {
   wait = true
 }
 
+locals {
+  helm_parameters = concat(
+    [
+      {
+        name  = "ingress.certificateArn"
+        value = var.certificate_arn
+      }
+    ],
+    var.image_repository != "" ? [
+      {
+        name  = "image.repository"
+        value = var.image_repository
+      }
+    ] : [],
+    var.image_tag != "" ? [
+      {
+        name  = "image.tag"
+        value = var.image_tag
+      }
+    ] : []
+  )
+}
+
 resource "kubernetes_manifest" "microblog_application" {
   manifest = {
     apiVersion = "argoproj.io/v1alpha1"
@@ -23,6 +46,9 @@ resource "kubernetes_manifest" "microblog_application" {
         repoURL        = "https://github.com/cloud-infra-assignment/helm-microblog.git"
         targetRevision = "main"
         path           = "microblog"
+        helm = {
+          parameters = local.helm_parameters
+        }
       }
       destination = {
         server    = "https://kubernetes.default.svc"

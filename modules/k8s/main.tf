@@ -64,6 +64,12 @@ resource "aws_iam_role" "alb_controller" {
       }
     ]
   })
+
+  # AWS normalizes policy JSON and upstream provider evaluation can lead to noisy diffs.
+  # Suppress perpetual diffs on the trust policy to keep plans clean.
+  lifecycle {
+    ignore_changes = [assume_role_policy]
+  }
 }
 
 # IAM managed policy for ALB controller - using official AWS policy from GitHub
@@ -352,7 +358,7 @@ resource "helm_release" "aws_load_balancer_controller" {
 
   set {
     name  = "region"
-    value = "eu-central-1"
+    value = var.aws_region
   }
 
   set {
@@ -364,3 +370,31 @@ resource "helm_release" "aws_load_balancer_controller" {
 }
 
 data "aws_caller_identity" "current" {}
+
+locals {
+  dockerconfigjson = jsonencode({
+    auths = {
+      "ghcr.io" = {
+        username = var.ghcr_username
+        password = var.ghcr_token
+        auth     = base64encode("${var.ghcr_username}:${var.ghcr_token}")
+      }
+    }
+  })
+}
+
+# Image pull secret for GHCR (optional)
+resource "kubernetes_secret_v1" "ghcr_pull_secret" {
+  count = var.create_image_pull_secret && var.ghcr_username != "" && var.ghcr_token != "" ? 1 : 0
+
+  metadata {
+    name      = var.image_pull_secret_name
+    namespace = var.image_pull_secret_namespace
+  }
+
+  type = "kubernetes.io/dockerconfigjson"
+
+  data = {
+    ".dockerconfigjson" = local.dockerconfigjson
+  }
+}
